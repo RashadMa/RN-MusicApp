@@ -1,10 +1,10 @@
 import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import Bro from '../../assets/images/Bro'
-import Happn from '../../assets/images/Happn'
-import ShapedDot from '../../assets/images/ShapedDot'
-import Star from '../../assets/images/Star'
-import AngleRight from '../../assets/images/AngleRight'
+import Bro from '../../assets/images/onboarding/Bro'
+import Happn from '../../assets/images/onboarding/Happn'
+import ShapedDot from '../../assets/images/onboarding/ShapedDot'
+import Star from '../../assets/images/onboarding/Star'
+import AngleRight from '../../assets/images/onboarding/AngleRight'
 
 const Onboarding = () => {
       return (
@@ -14,7 +14,7 @@ const Onboarding = () => {
                   <Happn />
                   <Star style={styles.star} />
                   <TouchableOpacity style={styles.signUp}>
-                        <Text style={{ fontWeight: "800", fontSize: 20 }}>SIGN UP</Text>
+                        <Text style={{ fontWeight: "700", fontSize: 20 }}>SIGN UP</Text>
                         <AngleRight />
                   </TouchableOpacity>
             </SafeAreaView>
@@ -58,8 +58,6 @@ const styles = StyleSheet.create({
             },
             shadowOpacity: 2.58,
             shadowRadius: 2.00,
-
             elevation: 50,
       }
-
 })
