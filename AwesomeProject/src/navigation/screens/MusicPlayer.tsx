@@ -1,5 +1,5 @@
-import { SafeAreaView, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
-import React from 'react'
+import { SafeAreaView, StyleSheet, Text, View, Image, TouchableOpacity, FlatList, Dimensions, Animated } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import GoBack from '../../assets/images/player/GoBack'
 import LongLine from '../../assets/images/home/LongLine'
 import ShortLine from '../../assets/images/home/ShortLine'
@@ -12,9 +12,51 @@ import Prev from '../../assets/images/player/Prev'
 import BorderedPlay from '../../assets/images/player/BorderedPlay'
 import Next from '../../assets/images/player/Next'
 import ThreeDots from '../../assets/images/player/ThreeDots'
+import Slider from '@react-native-community/slider'
 
 const MusicPlayer = ({ route, navigation }: any) => {
       const { id } = route.params
+      const { width, height } = Dimensions.get('window')
+      const trackSlider = useRef(null)
+
+      useEffect(() => {
+            scrollX.addListener(({ value }) => {
+                  const index = Math.round(value / width)
+                  setTrackIndex(index)
+            })
+            return () => {
+                  scrollX.removeAllListeners()
+            }
+      }, [])
+      const scrollX = useRef(new Animated.Value(0)).current
+      const [trackIndex, setTrackIndex] = useState(0)
+      const skipToNext = () => {
+            trackSlider.current.scrollToOffset({
+                  offset: (trackIndex + 1) * width,
+            })
+      }
+      const skipToPrev = () => {
+            trackSlider.current.scrollToOffset({
+                  offset: (trackIndex - 1) * width,
+            })
+      }
+
+      const renderTracks = ({ item, index }: any) => {
+            return <>
+                  <Animated.View style={{
+                        width: width,
+                        justifyContent: "center",
+                        alignItems: "center",
+                  }}>
+                        <View>
+                              <ProfileDots style={styles.dots} />
+                              <Rectangle />
+                        </View>
+                        <Image style={styles.albumImg} source={{ uri: item.imageUrl }} />
+                  </Animated.View>
+            </>
+      }
+
       return (
             <SafeAreaView style={styles.body}>
                   <View style={styles.playerHeader}>
@@ -29,31 +71,46 @@ const MusicPlayer = ({ route, navigation }: any) => {
                         <Favs />
                   </View>
                   <View style={styles.player}>
-                        <View style={{ alignItems: "center" }}>
-                              <ProfileDots style={styles.dots} />
-                              <Rectangle />
-                              <Image style={styles.albumImg} source={{ uri: tracks[0].imageUrl }} />
-                              <View style={{ marginTop: 20 }}>
-                                    <Text style={styles.title}>{tracks[0].title}</Text>
-                                    <Text style={styles.artist}>{tracks[0].artist}</Text>
-                              </View>
+                        <Animated.FlatList
+                              ref={trackSlider}
+                              showsHorizontalScrollIndicator={false}
+                              horizontal
+                              data={tracks}
+                              renderItem={renderTracks}
+                              pagingEnabled
+                              scrollEventThrottle={16}
+                              onScroll={Animated.event(
+                                    [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+                                    { useNativeDriver: true }
+                              )}
+                        />
+                        <View style={{ marginTop: 20, alignItems: "center" }}>
+                              <Text style={styles.title}>{tracks[trackIndex].title}</Text>
+                              <Text style={styles.artist}>{tracks[trackIndex].artist}</Text>
                         </View>
-                        <View style={{ width: "100%", height: 60, backgroundColor: "#000", marginVertical: 30 }}>
-                              <Text>
-                                    Slider
-                              </Text>
+                        <View style={{ padding: 15 }}>
+                              <Slider
+                                    style={styles.progressBar}
+                                    value={0}
+                                    minimumValue={0}
+                                    maximumValue={100}
+                                    minimumTrackTintColor="#FF6B00"
+                                    maximumTrackTintColor="#C7C7C7"
+                                    thumbTintColor="#FF6B00"
+                                    onSlidingComplete={() => { }}
+                              />
                         </View>
                         <View style={styles.operators}>
                               <TouchableOpacity>
                                     <Repeat />
                               </TouchableOpacity>
-                              <TouchableOpacity>
+                              <TouchableOpacity onPress={skipToPrev}>
                                     <Prev />
                               </TouchableOpacity>
                               <TouchableOpacity>
                                     <BorderedPlay />
                               </TouchableOpacity>
-                              <TouchableOpacity>
+                              <TouchableOpacity onPress={skipToNext}>
                                     <Next />
                               </TouchableOpacity>
                               <TouchableOpacity>
@@ -61,6 +118,7 @@ const MusicPlayer = ({ route, navigation }: any) => {
                               </TouchableOpacity>
 
                         </View>
+
                   </View>
             </SafeAreaView>
       )
@@ -114,5 +172,10 @@ const styles = StyleSheet.create({
             justifyContent: "space-between",
             alignItems: "center",
             paddingHorizontal: 15
+      },
+      progressBar: {
+            width: "100%",
+            height: 40,
+            flexDirection: "row",
       }
 })
