@@ -1,10 +1,31 @@
-import { SafeAreaView, StyleSheet, Text, View, Image, TextInput } from 'react-native'
 import React from 'react'
+import { FlatList, Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import LongLine from '../../assets/images/home/LongLine'
+import Play from '../../assets/images/home/Play'
 import ShortLine from '../../assets/images/home/ShortLine'
-import ShapedDot from '../../assets/images/onboarding/ShapedDot'
 import Star from '../../assets/images/onboarding/Star'
-const Homescreen = () => {
+import tracks from '../../model/musicDatas'
+import ProfileDots from '../../assets/images/home/ProfileDots'
+
+const Homescreen = ({ navigation }: any) => {
+      const renderTracks = ({ item }: any) => {
+            return <>
+                  <View style={[styles.itemContainer, styles.itemGap]}>
+                        <View style={styles.imgContainer}>
+                              <Image style={styles.albumImg} source={{ uri: item.imageUrl }} />
+                              <TouchableOpacity onPress={() => navigation.navigate('musicplayer', { id: item.id })}>
+                                    <Play style={styles.play} />
+                              </TouchableOpacity>
+                        </View>
+                        <View style={{ alignItems: "center" }}>
+                              <Text style={{ width: "70%", textAlign: "center" }}>
+                                    {item.title}
+                              </Text>
+                        </View>
+                  </View>
+            </>
+      }
+
       return (
             <SafeAreaView style={styles.body}>
                   <View style={{ margin: 20 }}>
@@ -18,7 +39,7 @@ const Homescreen = () => {
                                     <Text style={styles.letsPlay}>Let’s play some music!</Text>
                               </View>
                               <View>
-                                    {/* <ShapedDot style={styles.dots} /> */}
+                                    {/* <ProfileDots /> */}
                                     <Image style={styles.profile} source={require('../../assets/images/profile/Maskgroup.jpg')} />
                               </View>
                         </View>
@@ -30,8 +51,18 @@ const Homescreen = () => {
                                     <Text style={styles.recentlyPlayed}>Recently Played</Text>
                                     <Star />
                               </View>
-                              <Text style={styles.viewMore}>View More</Text>
-
+                              <TouchableOpacity>
+                                    <Text style={styles.viewMore}>View More</Text>
+                              </TouchableOpacity>
+                        </View>
+                        <View>
+                              <FlatList
+                                    showsHorizontalScrollIndicator={false}
+                                    horizontal
+                                    data={tracks}
+                                    renderItem={renderTracks}
+                                    ItemSeparatorComponent={() => <View style={styles.separator} />}
+                              />
                         </View>
                   </View>
 
@@ -89,5 +120,38 @@ const styles = StyleSheet.create({
             fontSize: 18,
             textDecorationLine: 'underline',
             color: "#6B6B6B",
+      },
+      albumImg: {
+            width: 114,
+            height: 114,
+            borderRadius: 20,
+            resizeMode: "cover",
+      },
+      imgContainer: {
+            shadowColor: "grey",
+            shadowOffset: {
+                  width: 0,
+                  height: 5,
+            },
+            shadowOpacity: 2.58,
+            shadowRadius: 2.00,
+            elevation: 50,
+            marginBottom: 15,
+      },
+      itemContainer: {
+            backgroundColor: '#FFFFED',
+            padding: 10,
+      },
+      separator: {
+            height: 10,
+            backgroundColor: 'transparent',
+      },
+      itemGap: {
+            marginBottom: 16,
+      },
+      play: {
+            position: "absolute",
+            bottom: 10,
+            right: 10,
       }
 })
