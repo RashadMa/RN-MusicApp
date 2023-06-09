@@ -14,6 +14,7 @@ import Next from '../../assets/images/player/Next'
 import ThreeDots from '../../assets/images/player/ThreeDots'
 import Slider from '@react-native-community/slider'
 import TrackPlayer, { State, usePlaybackState } from 'react-native-track-player'
+import Pause from '../../assets/images/player/Pause'
 
 const setUpPlayer = async () => {
       try {
@@ -147,7 +148,9 @@ const MusicPlayer = ({ route, navigation }: any) => {
                                     <Prev />
                               </TouchableOpacity>
                               <TouchableOpacity onPress={togglePause}>
-                                    <BorderedPlay />
+                                    {
+                                          pause == "paused" ? <BorderedPlay /> : <Pause />
+                                    }
                               </TouchableOpacity>
                               <TouchableOpacity onPress={skipToNext}>
                                     <Next />
