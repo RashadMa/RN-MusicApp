@@ -13,20 +13,57 @@ import BorderedPlay from '../../assets/images/player/BorderedPlay'
 import Next from '../../assets/images/player/Next'
 import ThreeDots from '../../assets/images/player/ThreeDots'
 import Slider from '@react-native-community/slider'
+import TrackPlayer, { State, usePlaybackState } from 'react-native-track-player'
+
+const setUpPlayer = async () => {
+      try {
+            await TrackPlayer.setupPlayer()
+            await TrackPlayer.add(tracks)
+      }
+      catch (error) {
+            console.log(error)
+      }
+}
+
+// const togglePlayback = async ({ playbackState }: any) => {
+//       const currentTrack = await TrackPlayer.getCurrentTrack()
+//       console.log(playbackState);
+//       if (currentTrack != null) {
+//             if (playbackState == State.Paused) {
+//                   await TrackPlayer.play()
+//             } else {
+//                   await TrackPlayer.pause()
+//             }
+//       }
+// }
 
 const MusicPlayer = ({ route, navigation }: any) => {
+      // const playbackState = usePlaybackState()
+      const [pause, setPause] = useState("paused")
       const { id } = route.params
       const { width, height } = Dimensions.get('window')
-      const trackSlider = useRef(null)
+      const trackSlider = useRef<any>(null)
+
+
+      const togglePause = () => {
+            if (pause == "paused") {
+                  TrackPlayer.play()
+                  setPause("playing")
+            } else {
+                  TrackPlayer.pause()
+                  setPause("paused")
+            }
+      }
 
       useEffect(() => {
+            setUpPlayer()
             scrollX.addListener(({ value }) => {
                   const index = Math.round(value / width)
                   setTrackIndex(index)
             })
-            return () => {
-                  scrollX.removeAllListeners()
-            }
+            // return () => {
+            //       scrollX.removeAllListeners()
+            // }
       }, [])
       const scrollX = useRef(new Animated.Value(0)).current
       const [trackIndex, setTrackIndex] = useState(0)
@@ -60,7 +97,9 @@ const MusicPlayer = ({ route, navigation }: any) => {
       return (
             <SafeAreaView style={styles.body}>
                   <View style={styles.playerHeader}>
-                        <GoBack onPress={() => navigation.goBack()} />
+                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                              <GoBack />
+                        </TouchableOpacity>
                         <View>
                               <View style={{ alignItems: "center" }}>
                                     <Text style={styles.nowPlaying}>Now Playing</Text>
@@ -107,13 +146,13 @@ const MusicPlayer = ({ route, navigation }: any) => {
                               <TouchableOpacity onPress={skipToPrev}>
                                     <Prev />
                               </TouchableOpacity>
-                              <TouchableOpacity>
+                              <TouchableOpacity onPress={togglePause}>
                                     <BorderedPlay />
                               </TouchableOpacity>
                               <TouchableOpacity onPress={skipToNext}>
                                     <Next />
                               </TouchableOpacity>
-                              <TouchableOpacity>
+                              <TouchableOpacity onPress={TrackPlayer.pause}>
                                     <ThreeDots />
                               </TouchableOpacity>
 
