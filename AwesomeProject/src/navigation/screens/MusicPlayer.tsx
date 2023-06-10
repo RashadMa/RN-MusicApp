@@ -13,7 +13,7 @@ import BorderedPlay from '../../assets/images/player/BorderedPlay'
 import Next from '../../assets/images/player/Next'
 import ThreeDots from '../../assets/images/player/ThreeDots'
 import Slider from '@react-native-community/slider'
-import TrackPlayer, { State, usePlaybackState } from 'react-native-track-player'
+import TrackPlayer, { Event, State, usePlaybackState, useProgress, useTrackPlayerEvents } from 'react-native-track-player'
 import Pause from '../../assets/images/player/Pause'
 
 const setUpPlayer = async () => {
@@ -40,11 +40,23 @@ const setUpPlayer = async () => {
 
 const MusicPlayer = ({ route, navigation }: any) => {
       // const playbackState = usePlaybackState()
+      const progress = useProgress()
       const [pause, setPause] = useState("paused")
       const { id } = route.params
       const { width, height } = Dimensions.get('window')
       const trackSlider = useRef<any>(null)
 
+      useTrackPlayerEvents([Event.PlaybackTrackChanged], async (event: any) => {
+            if (event.type == Event.PlaybackTrackChanged && event.nextTrack != null) {
+                  const track = await TrackPlayer.getTrack(event.nextTrack)
+            }
+      })
+
+      const skipTrack = async (trackId) => {
+            await TrackPlayer.skip(trackId)
+            setPause("playing")
+            TrackPlayer.play()
+      }
 
       const togglePause = () => {
             if (pause == "paused") {
@@ -60,11 +72,12 @@ const MusicPlayer = ({ route, navigation }: any) => {
             setUpPlayer()
             scrollX.addListener(({ value }) => {
                   const index = Math.round(value / width)
+                  skipTrack(index)
                   setTrackIndex(index)
             })
-            // return () => {
-            //       scrollX.removeAllListeners()
-            // }
+            return () => {
+                  scrollX.removeAllListeners()
+            }
       }, [])
       const scrollX = useRef(new Animated.Value(0)).current
       const [trackIndex, setTrackIndex] = useState(0)
@@ -131,14 +144,20 @@ const MusicPlayer = ({ route, navigation }: any) => {
                         <View style={{ padding: 15 }}>
                               <Slider
                                     style={styles.progressBar}
-                                    value={0}
+                                    value={progress.position}
                                     minimumValue={0}
-                                    maximumValue={100}
+                                    maximumValue={progress.duration}
                                     minimumTrackTintColor="#FF6B00"
                                     maximumTrackTintColor="#C7C7C7"
                                     thumbTintColor="#FF6B00"
-                                    onSlidingComplete={() => { }}
+                                    onSlidingComplete={async (value) => {
+                                          await TrackPlayer.seekTo(value)
+                                    }}
                               />
+                              <View style={styles.timeWrapper}>
+                                    <Text>{new Date(progress.position * 1000).toISOString().substr(14, 5)}</Text>
+                                    <Text>{new Date((progress.duration - progress.position) * 1000).toISOString().substr(14, 5)}</Text>
+                              </View>
                         </View>
                         <View style={styles.operators}>
                               <TouchableOpacity>
@@ -149,7 +168,7 @@ const MusicPlayer = ({ route, navigation }: any) => {
                               </TouchableOpacity>
                               <TouchableOpacity onPress={togglePause}>
                                     {
-                                          pause == "paused" ? <BorderedPlay /> : <Pause />
+                                          pause == "paused" ? <BorderedPlay /> : <View style={styles.pauseWrapper}><Pause /></View>
                                     }
                               </TouchableOpacity>
                               <TouchableOpacity onPress={skipToNext}>
@@ -219,5 +238,18 @@ const styles = StyleSheet.create({
             width: "100%",
             height: 40,
             flexDirection: "row",
+      },
+      pauseWrapper: {
+            width: 70,
+            height: 70,
+            backgroundColor: "#fff",
+            borderRadius: 22,
+            justifyContent: "center",
+            alignItems: "center",
+            borderWidth: 2
+      },
+      timeWrapper: {
+            flexDirection: "row",
+            justifyContent: "space-between",
       }
 })
