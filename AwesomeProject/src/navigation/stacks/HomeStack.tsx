@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react'
 import Homescreen from '../screens/Homescreen';
 import MusicPlayer from '../screens/MusicPlayer';
+import ArtistDetails from '../screens/ArtistDetails';
 const Home = createNativeStackNavigator();
 
 const HomeStack = () => {
@@ -10,6 +11,7 @@ const HomeStack = () => {
             <>
                   <Home.Navigator screenOptions={{ headerShown: false }}>
                         <Home.Screen name="homescreen" component={Homescreen} />
+                        <Home.Screen name="artistdetails" component={ArtistDetails} />
                         <Home.Screen name="musicplayer" component={MusicPlayer} />
                   </Home.Navigator>
             </>

@@ -13,16 +13,10 @@ import BorderedPlay from '../../assets/images/player/BorderedPlay'
 import Next from '../../assets/images/player/Next'
 import ThreeDots from '../../assets/images/player/ThreeDots'
 import Slider from '@react-native-community/slider'
-import TrackPlayer, { Event, RepeatMode, State, usePlaybackState, useProgress, useTrackPlayerEvents } from 'react-native-track-player'
+import TrackPlayer, { Capability, Event, RepeatMode, State, usePlaybackState, useProgress, useTrackPlayerEvents } from 'react-native-track-player'
 import Pause from '../../assets/images/player/Pause'
-import NoRepeat from '../../assets/images/player/NoRepeat'
-import RepeatOnce from '../../assets/images/player/RepeatOnce'
-
-const setUpPlayer = async () => {
-      await TrackPlayer.setupPlayer()
-      await TrackPlayer.add(tracks)
-
-}
+import artists from '../../model/musicDatas'
+import { ActivityIndicator, MD2Colors } from 'react-native-paper'
 
 // const togglePlayback = async (playbackState) => {
 //       const currentTrack = await TrackPlayer.getCurrentTrack()
@@ -39,7 +33,7 @@ const setUpPlayer = async () => {
 const MusicPlayer = ({ route, navigation }: any) => {
       const playbackState = usePlaybackState()
       const progress = useProgress()
-      const [pause, setPause] = useState("paused")
+      const [isPaused, setIsPaused] = useState(true)
       const { id } = route.params
       const { width, height } = Dimensions.get('window')
       const trackSlider = useRef<any>(null)
@@ -47,7 +41,20 @@ const MusicPlayer = ({ route, navigation }: any) => {
       const [artist, setArtist] = useState("")
       const [imageUrl, setImageUrl] = useState("")
       const [repeatMode, setRepeatMode] = useState("off")
-
+      const trackss = artists.find(artist => artist.id === route.params.id)?.tracks
+      const setUpPlayer = async () => {
+            await TrackPlayer.setupPlayer()
+            await TrackPlayer.updateOptions({
+                  capabilities: [
+                        Capability.Play,
+                        Capability.Pause,
+                        Capability.SkipToNext,
+                        Capability.SkipToPrevious,
+                        Capability.Stop,
+                  ]
+            })
+            await TrackPlayer.add(trackss)
+      }
 
       const changeRepeatMode = () => {
             if (repeatMode == "off") {
@@ -64,8 +71,6 @@ const MusicPlayer = ({ route, navigation }: any) => {
             }
       }
 
-
-
       useTrackPlayerEvents([Event.PlaybackTrackChanged], async (event: any) => {
             if (event.type == Event.PlaybackTrackChanged && event.nextTrack != null) {
                   const track = await TrackPlayer.getTrack(event.nextTrack)
@@ -79,17 +84,17 @@ const MusicPlayer = ({ route, navigation }: any) => {
 
       const skipTrack = async (trackId) => {
             await TrackPlayer.skip(trackId)
-            setPause("playing")
+            setIsPaused(false)
             TrackPlayer.play()
       }
 
       const togglePause = () => {
-            if (pause == "paused") {
+            if (isPaused) {
                   TrackPlayer.play()
-                  setPause("playing")
+                  setIsPaused(false)
             } else {
                   TrackPlayer.pause()
-                  setPause("paused")
+                  setIsPaused(true)
             }
       }
 
@@ -117,7 +122,7 @@ const MusicPlayer = ({ route, navigation }: any) => {
             })
       }
 
-      const renderTracks = ({ item, index }: any) => {
+      const renderTracks = () => {
             return <>
                   <Animated.View style={{
                         width: width,
@@ -128,7 +133,9 @@ const MusicPlayer = ({ route, navigation }: any) => {
                               <ProfileDots style={styles.dots} />
                               <Rectangle />
                         </View>
-                        <Image style={styles.albumImg} source={{ uri: imageUrl }} />
+                        {
+                              imageUrl ? <Image style={styles.albumImg} source={{ uri: imageUrl }} /> : <ActivityIndicator style={{ position: "absolute" }} animating={true} color={MD2Colors.red800} />
+                        }
                   </Animated.View>
             </>
       }
@@ -196,7 +203,7 @@ const MusicPlayer = ({ route, navigation }: any) => {
                               </TouchableOpacity>
                               <TouchableOpacity onPress={togglePause}>
                                     {
-                                          pause == "paused" ? <BorderedPlay /> : <View style={styles.pauseWrapper}><Pause /></View>
+                                          isPaused ? <BorderedPlay /> : <View style={styles.pauseWrapper}><Pause /></View>
                                     }
 
                               </TouchableOpacity>
@@ -206,9 +213,7 @@ const MusicPlayer = ({ route, navigation }: any) => {
                               <TouchableOpacity>
                                     <ThreeDots />
                               </TouchableOpacity>
-
                         </View>
-
                   </View>
             </SafeAreaView>
       )

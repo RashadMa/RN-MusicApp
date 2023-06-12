@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeStack from './stacks/HomeStack';
 import FavouritesStack from './stacks/FavouritesStack';
 import SettingStack from './stacks/SettingStack';
+import Test from './screens/Test';
 const Tab = createBottomTabNavigator();
 const TabMain = () => {
       return (
@@ -17,7 +18,7 @@ const TabMain = () => {
                               options={{
 
                               }} />
-                        <Tab.Screen name='FavouritesStack' component={FavouritesStack}
+                        <Tab.Screen name='FavouritesStack' component={Test}
                               options={{
 
                               }} />
