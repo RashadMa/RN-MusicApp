@@ -69,6 +69,8 @@ const artists = [
           'https://i.pinimg.com/originals/5d/79/77/5d7977ed56ff0737012585a0f7b96dca.jpg',
         url: require('../assets/music/Gojira-TheGiftOfGuilt.mp3'),
         duration: 351,
+        lyrics:
+          "We leave the shores to see the mountains rising \nA distant impression growing \nThis judgment creates the pain we hold \nDestructive intentions that serve no purpose but the end of us all\nThese vultures from the past \nComing in all the hells and worlds, the time has come \nDelivered from their eyes \nEmbrace, suffer, destroy - the gift of guilt\nThe shame and sorrow, self-condemnation \nFill all the gaps and the spaces, unyielding \nBestowed upon us, devastating power\nWe're building connective tissue to a maze of lies We're left as starving orphans, the vital core is gone \nOur sins are all over and over again we swallow \nWe're sick and tired when this wind blows, the reflex is insane We must forgive and stop blaming ourselves for this love In all the hells and worlds, the time has come \nIn all the hells and worlds, the time has come \nThese vultures from the past \nComing in all the hells and worlds, the time has come \nDelivered from their eyes \nI'm leaving this behind - the gift of guilt \nThe gift of guilt \nThe gift of guilt",
       },
       {
         id: 2,
@@ -148,6 +150,30 @@ const artists = [
         imageUrl:
           'https://i.pinimg.com/originals/d9/10/7c/d9107c17987f20f8a3d910b8c6193397.jpg',
         url: require('../assets/music/Eclipse.mp3'),
+        duration: 132,
+      },
+      {
+        id: 35,
+        title: 'Brian Damage',
+        imageUrl:
+          'https://i.pinimg.com/originals/d9/10/7c/d9107c17987f20f8a3d910b8c6193397.jpg',
+        url: require('../assets/music/PinkFloyd-BrainDamage.mp3'),
+        duration: 132,
+      },
+      {
+        id: 36,
+        title: 'Money',
+        imageUrl:
+          'https://i.pinimg.com/originals/d9/10/7c/d9107c17987f20f8a3d910b8c6193397.jpg',
+        url: require('../assets/music/PinkFloyd-Money.mp3'),
+        duration: 132,
+      },
+      {
+        id: 37,
+        title: 'Wish You Were Here',
+        imageUrl:
+          'https://i.pinimg.com/originals/d9/10/7c/d9107c17987f20f8a3d910b8c6193397.jpg',
+        url: require('../assets/music/PinkFloyd-WishYouWereHere.mp3'),
         duration: 132,
       },
     ],

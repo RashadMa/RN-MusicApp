@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, View, Image, TouchableOpacity, FlatList, Dimensions, Animated } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, View, Image, TouchableOpacity, FlatList, Dimensions, Animated, Alert, Pressable, Modal } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import GoBack from '../../assets/images/player/GoBack'
 import LongLine from '../../assets/images/home/LongLine'
@@ -40,6 +40,7 @@ const MusicPlayer = ({ route, navigation }: any) => {
       const [title, setTitle] = useState("")
       const [artist, setArtist] = useState("")
       const [imageUrl, setImageUrl] = useState("")
+      const [lyrics, setLyrics] = useState("")
       const [repeatMode, setRepeatMode] = useState("off")
       const trackss = artists.find(artist => artist.id === route.params.id)?.tracks
       const setUpPlayer = async () => {
@@ -74,10 +75,11 @@ const MusicPlayer = ({ route, navigation }: any) => {
       useTrackPlayerEvents([Event.PlaybackTrackChanged], async (event: any) => {
             if (event.type == Event.PlaybackTrackChanged && event.nextTrack != null) {
                   const track = await TrackPlayer.getTrack(event.nextTrack)
-                  const { title, artist, imageUrl } = track;
+                  const { title, artist, imageUrl, lyrics } = track;
                   setTitle(title)
                   setArtist(artist)
                   setImageUrl(imageUrl)
+                  setLyrics(lyrics)
 
             }
       })
@@ -139,6 +141,7 @@ const MusicPlayer = ({ route, navigation }: any) => {
                   </Animated.View>
             </>
       }
+      const [modalVisible, setModalVisible] = useState(false);
 
       return (
             <SafeAreaView style={styles.body}>
@@ -173,7 +176,7 @@ const MusicPlayer = ({ route, navigation }: any) => {
                               <Text style={styles.title}>{title}</Text>
                               <Text style={styles.artist}>{artist}</Text>
                         </View>
-                        <View style={{ padding: 15 }}>
+                        <View style={{ paddingHorizontal: 15 }}>
                               <Slider
                                     style={styles.progressBar}
                                     value={progress.position}
@@ -213,6 +216,51 @@ const MusicPlayer = ({ route, navigation }: any) => {
                               <TouchableOpacity>
                                     <ThreeDots />
                               </TouchableOpacity>
+                        </View>
+                        <TouchableOpacity style={{
+                              alignItems: "center",
+                              marginTop: 20
+                        }}
+                              onPress={() => setModalVisible(true)}
+                        >
+                              <Text style={{
+                                    borderWidth: 1,
+                                    borderRadius: 20,
+                                    padding: 15,
+                                    fontWeight: "600",
+                              }}>View Lyrics</Text>
+                        </TouchableOpacity>
+                        <View style={styles.centeredView}>
+                              <Modal
+                                    animationType="slide"
+                                    transparent={true}
+                                    visible={modalVisible}
+                                    onRequestClose={() => {
+                                          Alert.alert('Modal has been closed.');
+                                          setModalVisible(!modalVisible);
+                                    }}>
+                                    <View style={styles.centeredView}>
+                                          <View style={styles.modalView}>
+                                                <Text style={styles.modalText}>{
+                                                      lyrics ? lyrics : "No Lyrics Found"
+                                                }</Text>
+                                                <TouchableOpacity style={{
+                                                      alignItems: "center",
+                                                      marginTop: 20
+                                                }}
+                                                      onPress={() => setModalVisible(!modalVisible)}
+                                                >
+                                                      <Text style={{
+                                                            borderWidth: 1,
+                                                            borderRadius: 20,
+                                                            padding: 15,
+                                                            fontWeight: "600",
+                                                      }}>Hide Lyrics</Text>
+                                                </TouchableOpacity>
+                                          </View>
+                                    </View>
+                              </Modal>
+
                         </View>
                   </View>
             </SafeAreaView>
@@ -285,5 +333,46 @@ const styles = StyleSheet.create({
       timeWrapper: {
             flexDirection: "row",
             justifyContent: "space-between",
-      }
+      },
+      centeredView: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            // marginTop: 22,
+            // position: "absolute",
+      },
+      modalView: {
+            margin: 20,
+            backgroundColor: 'white',
+            borderRadius: 20,
+            padding: 35,
+            alignItems: 'center',
+            shadowColor: '#000',
+            shadowOffset: {
+                  width: 0,
+                  height: 2,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 4,
+            elevation: 5,
+      },
+      button: {
+            borderRadius: 20,
+            padding: 10,
+            elevation: 2,
+      },
+      buttonOpen: {
+            backgroundColor: '#F194FF',
+      },
+      buttonClose: {
+            backgroundColor: '#2196F3',
+      },
+      textStyle: {
+            color: 'white',
+            fontWeight: 'bold',
+            textAlign: 'center',
+      },
+      modalText: {
+            marginBottom: 15,
+      },
 })
