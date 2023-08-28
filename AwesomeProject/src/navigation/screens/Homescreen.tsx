@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FlatList, Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { FlatList, Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import LongLine from '../../assets/images/home/LongLine'
 import Play from '../../assets/images/home/Play'
 import ShortLine from '../../assets/images/home/ShortLine'
@@ -52,69 +52,67 @@ const Homescreen = ({ navigation }: any) => {
             setData(filtereddata);
             console.log(filtereddata);
       }
-      useEffect(() => {
-            // Searching('haggard')
-            console.log(data);
-
-      }, [])
 
       return (
             <SafeAreaView style={styles.body}>
-                  <View style={{ margin: 20 }}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-                              <View>
-                                    <Text style={styles.goodMorning}>Good Morning!</Text>
-                                    <View style={{ alignItems: "center" }}>
-                                          <LongLine />
-                                          <ShortLine />
+                  <ScrollView>
+                        <View style={{ margin: 20 }}>
+                              <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                                    <View>
+                                          <Text style={styles.goodMorning}>Good Morning!</Text>
+                                          <View style={{ alignItems: "center" }}>
+                                                <LongLine />
+                                                <ShortLine />
+                                          </View>
+                                          <Text style={styles.letsPlay}>Let’s play some music!</Text>
                                     </View>
-                                    <Text style={styles.letsPlay}>Let’s play some music!</Text>
+                                    <View>
+                                          {/* <ProfileDots /> */}
+                                          <Image style={styles.profile} source={require('../../assets/images/profile/Maskgroup.jpg')} />
+                                    </View>
                               </View>
                               <View>
-                                    {/* <ProfileDots /> */}
-                                    <Image style={styles.profile} source={require('../../assets/images/profile/Maskgroup.jpg')} />
+                                    <TextInput onChangeText={Searching} style={styles.input} placeholder='Search for any music or podcast' />
+                              </View>
+                              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                                    <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10 }}>
+                                          <Text style={styles.recentlyPlayed}>Artists</Text>
+                                          <Star />
+                                    </View>
+                                    <TouchableOpacity>
+                                          <Text style={styles.viewMore}>View More</Text>
+                                    </TouchableOpacity>
                               </View>
                         </View>
                         <View>
-                              <TextInput onChangeText={Searching} style={styles.input} placeholder='Search for any music or podcast' />
+                              <FlatList
+                                    showsHorizontalScrollIndicator={false}
+                                    horizontal
+                                    data={data}
+                                    renderItem={renderArtists}
+                                    ItemSeparatorComponent={() => <View style={styles.separator} />}
+                              />
                         </View>
-                        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                        <View style={{ flexDirection: "row", justifyContent: "space-between", marginHorizontal: 20, paddingTop: 20 }}>
                               <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                                    <Text style={styles.recentlyPlayed}>Artists</Text>
+                                    <Text style={styles.recentlyPlayed}>Recently Played</Text>
                                     <Star />
                               </View>
                               <TouchableOpacity>
                                     <Text style={styles.viewMore}>View More</Text>
                               </TouchableOpacity>
                         </View>
-                  </View>
-                  <View>
-                        <FlatList
-                              showsHorizontalScrollIndicator={false}
-                              horizontal
-                              data={data}
-                              renderItem={renderArtists}
-                              ItemSeparatorComponent={() => <View style={styles.separator} />}
-                        />
-                  </View>
-                  <View style={{ flexDirection: "row", justifyContent: "space-between", marginHorizontal: 20 }}>
-                        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                              <Text style={styles.recentlyPlayed}>Recently Played</Text>
-                              <Star />
+                        <View>
+                              <FlatList
+                                    showsHorizontalScrollIndicator={false}
+                                    horizontal
+                                    data={tracks}
+                                    renderItem={recentlyPlayed}
+                                    ItemSeparatorComponent={() => <View style={styles.separator} />}
+                              />
                         </View>
-                        <TouchableOpacity>
-                              <Text style={styles.viewMore}>View More</Text>
-                        </TouchableOpacity>
-                  </View>
-                  <View>
-                        <FlatList
-                              showsHorizontalScrollIndicator={false}
-                              horizontal
-                              data={tracks}
-                              renderItem={recentlyPlayed}
-                              ItemSeparatorComponent={() => <View style={styles.separator} />}
-                        />
-                  </View>
+                  </ScrollView>
+
             </SafeAreaView>
       )
 }

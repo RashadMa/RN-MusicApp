@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, View, Image, TouchableOpacity, FlatList, Dimensions, Animated, Alert, Pressable, Modal } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, View, Image, TouchableOpacity, FlatList, Dimensions, Animated, Alert, Pressable, Modal, ScrollView } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import GoBack from '../../assets/images/player/GoBack'
 import LongLine from '../../assets/images/home/LongLine'
@@ -17,6 +17,8 @@ import TrackPlayer, { Capability, Event, RepeatMode, State, usePlaybackState, us
 import Pause from '../../assets/images/player/Pause'
 import artists from '../../model/musicDatas'
 import { ActivityIndicator, MD2Colors } from 'react-native-paper'
+import NoRepeat from '../../assets/images/player/NoRepeat'
+import RepeatOnce from '../../assets/images/player/RepeatOnce'
 
 // const togglePlayback = async (playbackState) => {
 //       const currentTrack = await TrackPlayer.getCurrentTrack()
@@ -196,10 +198,15 @@ const MusicPlayer = ({ route, navigation }: any) => {
                         </View>
                         <View style={styles.operators}>
                               <TouchableOpacity onPress={changeRepeatMode}>
-                                    {/* {
-                                          repeatMode == "off" ? <NoRepeat /> : repeatMode == "track" ? <RepeatOnce /> : <Repeat />
-                                    } */}
-                                    <Repeat />
+                                    {
+                                          repeatMode == "off" ? <Repeat style={{
+                                                width: 40,
+                                                height: 40
+                                          }} /> : <RepeatOnce style={{
+                                                width: 40,
+                                                height: 40
+                                          }} />
+                                    }
                               </TouchableOpacity>
                               <TouchableOpacity onPress={skipToPrev}>
                                     <Prev />
@@ -228,6 +235,7 @@ const MusicPlayer = ({ route, navigation }: any) => {
                                     borderRadius: 20,
                                     padding: 15,
                                     fontWeight: "600",
+                                    marginTop: 20
                               }}>View Lyrics</Text>
                         </TouchableOpacity>
                         <View style={styles.centeredView}>
@@ -239,26 +247,34 @@ const MusicPlayer = ({ route, navigation }: any) => {
                                           Alert.alert('Modal has been closed.');
                                           setModalVisible(!modalVisible);
                                     }}>
-                                    <View style={styles.centeredView}>
-                                          <View style={styles.modalView}>
-                                                <Text style={styles.modalText}>{
-                                                      lyrics ? lyrics : "No Lyrics Found"
-                                                }</Text>
-                                                <TouchableOpacity style={{
-                                                      alignItems: "center",
-                                                      marginTop: 20
-                                                }}
-                                                      onPress={() => setModalVisible(!modalVisible)}
-                                                >
-                                                      <Text style={{
-                                                            borderWidth: 1,
-                                                            borderRadius: 20,
-                                                            padding: 15,
-                                                            fontWeight: "600",
-                                                      }}>Hide Lyrics</Text>
-                                                </TouchableOpacity>
+                                    <ScrollView style={{
+                                          marginTop: 100,
+                                          backgroundColor: "#FFFFED",
+                                          // flex: 1,
+                                    }}>
+                                          <View style={styles.centeredView}>
+                                                <View style={styles.modalView}>
+                                                      <Text style={styles.modalText}>{
+                                                            lyrics ? lyrics : "No Lyrics Found"
+                                                      }</Text>
+                                                      <TouchableOpacity style={{
+                                                            alignItems: "center",
+                                                            marginTop: 20
+                                                      }}
+                                                            onPress={() => setModalVisible(!modalVisible)}
+                                                      >
+                                                            <Text style={{
+                                                                  borderWidth: 1,
+                                                                  borderRadius: 20,
+                                                                  padding: 15,
+                                                                  fontWeight: "600",
+                                                            }}>Hide Lyrics</Text>
+                                                      </TouchableOpacity>
+                                                </View>
                                           </View>
-                                    </View>
+
+                                    </ScrollView>
+
                               </Modal>
 
                         </View>
@@ -374,5 +390,6 @@ const styles = StyleSheet.create({
       },
       modalText: {
             marginBottom: 15,
+            fontSize: 18,
       },
 })
