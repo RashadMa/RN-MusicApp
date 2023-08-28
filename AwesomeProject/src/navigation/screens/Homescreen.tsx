@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { FlatList, Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import LongLine from '../../assets/images/home/LongLine'
 import Play from '../../assets/images/home/Play'
@@ -9,6 +9,7 @@ import artists from '../../model/musicDatas'
 
 const Homescreen = ({ navigation }: any) => {
       const tracks = artists.map((artist) => artist.tracks).flat()
+      const [data, setData] = useState(artists)
 
       const renderArtists = ({ item }: any) => {
             return <>
@@ -45,6 +46,18 @@ const Homescreen = ({ navigation }: any) => {
             </>
       }
 
+      const Searching = (value: string) => {
+            let filtereddata = artists.filter((c): any => c.name.toLowerCase().includes(value.toLowerCase()))
+
+            setData(filtereddata);
+            console.log(filtereddata);
+      }
+      useEffect(() => {
+            // Searching('haggard')
+            console.log(data);
+
+      }, [])
+
       return (
             <SafeAreaView style={styles.body}>
                   <View style={{ margin: 20 }}>
@@ -63,7 +76,7 @@ const Homescreen = ({ navigation }: any) => {
                               </View>
                         </View>
                         <View>
-                              <TextInput style={styles.input} placeholder='Search for any music or podcast' />
+                              <TextInput onChangeText={Searching} style={styles.input} placeholder='Search for any music or podcast' />
                         </View>
                         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                               <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
@@ -79,7 +92,7 @@ const Homescreen = ({ navigation }: any) => {
                         <FlatList
                               showsHorizontalScrollIndicator={false}
                               horizontal
-                              data={artists}
+                              data={data}
                               renderItem={renderArtists}
                               ItemSeparatorComponent={() => <View style={styles.separator} />}
                         />
